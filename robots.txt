@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://tiagolucer.github.io/primeiros-passos-cripto/sitemap.xml
+Sitemap: https://dltacademy.github.io/primeiros-passos-cripto/sitemap.xml

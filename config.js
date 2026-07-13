@@ -26,7 +26,7 @@ const CONFIG = {
   goatCounterSite: "",
 
   // URL pública final do site (preencher após o deploy — usada em cards/OG)
-  siteUrl: "https://tiagolucer.github.io/primeiros-passos-cripto/",
+  siteUrl: "https://dltacademy.github.io/primeiros-passos-cripto/",
 
   // Marca
   brand: "dltacademy",
