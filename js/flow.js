@@ -118,7 +118,7 @@ const FLOW = {
       });
     }
 
-    plan.push({ title: "Criar conta na corretora", text: "Use o link com desconto de taxa no final desta página." });
+    plan.push({ title: "Criar conta na corretora", text: "Use o link com cashback vitalício de taxa no final desta página." });
     plan.push({ title: "Verificação de identidade (KYC)", text: "Documento + selfie — libera os limites de depósito e saque." });
     plan.push({ title: "Ativar autenticação de dois fatores (2FA)", text: "Google Authenticator ou similar. Sem isso, não deposite nada." });
 
@@ -196,21 +196,25 @@ const FLOW = {
         eyebrow: "MEU PLANO DE ENTRADA NO CRIPTO",
         headline: `${plan.length} passos`,
         lines: [`R$ ${a.valorMensal}/mês · ${OBJETIVO_LABEL[a.objetivo] || ""}`, "Educacional — não é promessa de retorno"],
-        headlineColor: "#4ade80",
+        headlineColor: "#6EE7A8",
+        coupon: {
+          label: "PRESENTE POR RESPONDER",
+          offerText: "Cashback vitalício\nnas taxas Binance",
+        },
       },
     };
   },
 
   convert: {
-    tag: "Pronto pro passo 1?",
-    headline: "Abra a conta com desconto de taxa",
-    sub: "O mesmo link que já está no passo 1 do seu plano.",
+    tag: "Seu presente por responder",
+    headline: "Abra a conta com cashback vitalício nas taxas",
+    sub: "O mesmo link que já está no passo 1 do seu plano — cashback pra sempre, não só na entrada.",
     offers: [
-      "Desconto de taxa permanente",
+      "Cashback vitalício nas taxas (não é desconto só no cadastro)",
       "Chamada de 15min pra revisar seu plano junto comigo",
       "Sem sinais, sem promessa de lucro — só o próximo passo certo",
     ],
-    ctaLabel: "Abrir conta com desconto →",
+    ctaLabel: "Abrir conta com cashback vitalício →",
     tgLabel: "💬 Revisar meu plano",
     tgPrefill: "Vim pelo guia de primeiros passos — quero revisar meu plano",
   },
