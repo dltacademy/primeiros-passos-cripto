@@ -1,17 +1,52 @@
-# Primeiros Passos no Cripto — seu plano de entrada em 6 perguntas
+# Primeiros Passos no Cripto
 
-Responda 6 perguntas rápidas e receba um plano passo-a-passo personalizado pra começar em cripto com segurança — sem cadastro, roda no seu navegador.
+Ferramenta educacional para organizar reserva, segurança, prontidão e comportamento antes de abrir uma conta ou fazer o primeiro aporte em cripto.
 
-Construído com o [ferramenta-kit](https://github.com/dltacademy/ferramenta-kit) — página única, zero backend, zero build.
+O fluxo usa oito respostas para produzir um plano personalizado. A oferta afiliada só aparece quando a pessoa:
 
-## Antes de divulgar
+- informou que ainda não possui Binance;
+- já possui uma reserva para imprevistos compatível com seus gastos;
+- declarou prontidão para revisar o cadastro;
+- quer avançar além do estudo.
 
-1. Copiar `config.example.js` → `config.js` e preencher: links ref por canal, username do Telegram, código do GoatCounter.
-2. `og-image.png` (1200x630) de marca já vem pronto. Opcional: gerar um específico pra esta ferramenta com `generateCard({format:"og", ...})` do `js/canvas-cards.js` e sobrescrever.
-3. Habilitar GitHub Pages no repo (Settings → Pages → Source: GitHub Actions).
-4. Testar local: `python3 -m http.server 8000`.
-5. Divulgar com `?c=<canal>` em cada lugar diferente pra rastrear conversão por origem.
+Cliente Binance, pessoa sem reserva, pessoa sem prontidão e quem quer apenas aprender recebem um plano completo sem CTA comercial.
 
-## Estrutura
+## Estado de publicação
 
-Ver o [README do kit](https://github.com/dltacademy/ferramenta-kit) pra entender o padrão completo.
+A ferramenta permanece acessível para revisão, com indexação bloqueada por `<meta name="robots" content="noindex">`. O `robots.txt` usa `Allow: /` para que o crawler consiga ler essa diretiva.
+
+Não liberar indexação, divulgar ou escalar antes de:
+
+1. validar todos os caminhos em desktop e celular;
+2. revisar teclado, foco, console, copiar plano e download do card;
+3. abrir o link afiliado em sessão deslogada e confirmar benefício, país e elegibilidade;
+4. confirmar um cadastro atribuível no painel;
+5. aprovar o conteúdo e fazer merge deliberado.
+
+## Arquitetura
+
+- HTML/CSS/JavaScript vanilla;
+- zero backend, zero build e zero dependência externa nova;
+- respostas processadas somente no navegador;
+- CSP restritiva e JavaScript executável somente em arquivos externos;
+- tracking opcional por `?c=<canal>&v=<variante>` com parâmetros sanitizados;
+- contato público desabilitado enquanto `telegramUsername` estiver vazio.
+
+## Testes
+
+```bash
+python3 -m py_compile security_check.py
+python3 security_check.py .
+node --check config.js
+find js -name '*.js' -print0 | xargs -0 -n1 node --check
+node tests/test-flow.mjs
+node tests/test-contract.mjs
+```
+
+O workflow `Validate` executa esses gates em pull requests. O deploy do GitHub Pages continua restrito a pushes em `main`.
+
+## Domínio
+
+URL canônica: `https://primeiros-passos-cripto.dlt.academy/`.
+
+O portal e o sitemap não são alterados neste lote. A integração pública deve ser revisada separadamente depois do gate da ferramenta.
