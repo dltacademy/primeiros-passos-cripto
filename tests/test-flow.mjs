@@ -41,11 +41,10 @@ for (const jaTemBinance of binanceAnswers) {
       for (const objetivo of objectives) {
         combinations += 1;
         const result = report({ jaTemBinance, reserva, prontidao, objetivo });
-        const shouldOffer =
-          jaTemBinance === "nao" &&
-          reserva === "sim" &&
-          prontidao === "sim" &&
-          objetivo !== "aprender";
+        // Regra do operador (20/07/2026): a trava cobre somente quem já tem
+        // conta — e país, onde a pergunta existir. Reserva, prontidão e
+        // objetivo mudam o texto da oferta, não a existência dela.
+        const shouldOffer = jaTemBinance === "nao";
         assert.equal(
           Boolean(result.convertOverride),
           shouldOffer,
