@@ -17,7 +17,7 @@ const CONFIG = {
     },
   },
 
-  // Vazio por decisão de produto: nenhuma chamada ou revisão é prometida.
+  // Vazio por decisão de produto: nenhum contato público está configurado.
   telegramUsername: "",
   goatCounterSite: "",
   siteUrl: "https://primeiros-passos-cripto.dlt.academy/",
