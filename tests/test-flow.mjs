@@ -30,10 +30,32 @@ assert.match(
 );
 assert.match(JSON.stringify(eligible.convertOverride), /contas novas e elegíveis/i);
 
-assert.equal(report({ jaTemBinance: "sim" }).convertOverride, null, "cliente Binance não recebe CTA");
-assert.equal(report({ reserva: "nao" }).convertOverride, null, "sem reserva não recebe CTA");
-assert.equal(report({ objetivo: "aprender" }).convertOverride, null, "quem quer aprender não recebe CTA");
-assert.equal(report({ prontidao: "nao" }).convertOverride, null, "quem não está pronto não recebe CTA");
+const binanceAnswers = ["sim", "nao"];
+const reserveAnswers = ["sim", "nao"];
+const readinessAnswers = ["sim", "nao"];
+const objectives = ["longo-prazo", "diversificar", "aprender"];
+let combinations = 0;
+for (const jaTemBinance of binanceAnswers) {
+  for (const reserva of reserveAnswers) {
+    for (const prontidao of readinessAnswers) {
+      for (const objetivo of objectives) {
+        combinations += 1;
+        const result = report({ jaTemBinance, reserva, prontidao, objetivo });
+        const shouldOffer =
+          jaTemBinance === "nao" &&
+          reserva === "sim" &&
+          prontidao === "sim" &&
+          objetivo !== "aprender";
+        assert.equal(
+          Boolean(result.convertOverride),
+          shouldOffer,
+          `roteamento incorreto: Binance=${jaTemBinance}, reserva=${reserva}, prontidão=${prontidao}, objetivo=${objetivo}`
+        );
+      }
+    }
+  }
+}
+assert.equal(combinations, 24);
 
 const expectedFields = [
   "experiencia",
@@ -91,4 +113,4 @@ for (const claim of prohibited) {
 }
 
 assert.equal(/tgLabel|tgPrefill|publicTelegram/.test(source), false, "fluxo não deve prometer contato");
-console.log("Flow matrix: OK — 5 rotas de elegibilidade, 8 campos e claims revisados");
+console.log("Flow matrix: OK — 24 combinações centrais, 8 campos e claims revisados");
