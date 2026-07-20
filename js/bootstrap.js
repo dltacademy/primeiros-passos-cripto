@@ -5,17 +5,19 @@ function gateUnavailableConversion(report) {
   const offerUrl = convert.hideRef ? "#" : getOfferLink(convert.offerKey || "default");
   const hasOffer = Boolean(offerUrl && offerUrl !== "#");
   const hasTelegram = convert.publicTelegram === true && isTelegramConfigured();
-  if (hasOffer || hasTelegram) return report;
+  const conversionAvailable = hasOffer || hasTelegram;
 
   const routingLabels = new Set(["roteamento", "próximo passo"]);
   const stats = Array.isArray(report.stats)
-    ? report.stats.map((stat) =>
-        routingLabels.has(String(stat.label).toLowerCase())
-          ? { ...stat, value: "Sem oferta" }
-          : stat
-      )
+    ? report.stats.map((stat) => {
+        if (!routingLabels.has(String(stat.label).toLowerCase())) return stat;
+        if (!conversionAvailable) return { ...stat, value: "Sem oferta" };
+        if (stat.value === "Conta elegível") return { ...stat, value: "Oferta opcional" };
+        return stat;
+      })
     : report.stats;
 
+  if (conversionAvailable) return { ...report, stats };
   return { ...report, stats, convertOverride: null };
 }
 
