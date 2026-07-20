@@ -45,7 +45,9 @@ const expectedFields = [
   "medo",
   "reacaoQueda",
 ];
-const actualFields = flow.steps.flatMap((step) => step.fields.map((field) => field.id));
+const actualFields = Array.from(flow.steps, (step) =>
+  Array.from(step.fields, (field) => field.id)
+).flat();
 assert.deepEqual(actualFields, expectedFields, "a matriz deve cobrir todos os campos publicados");
 
 const variants = {
