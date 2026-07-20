@@ -124,11 +124,16 @@ const FLOW = {
   buildReport(answers) {
     const plan = [];
     const findings = [];
-    const eligible =
-      answers.jaTemBinance === "nao" &&
-      answers.reserva === "sim" &&
-      answers.prontidao === "sim" &&
-      answers.objetivo !== "aprender";
+    // A trava de elegibilidade cobre apenas quem já tem conta — e país, onde
+    // a pergunta existir. Reserva, prontidão e objetivo continuam definindo o
+    // veredito, o plano e o TEXTO da oferta; não a existência dela. Esconder a
+    // informação de que a conta existe não protege ninguém: o que protege é
+    // dizer, no mesmo lugar, qual é o próximo passo real da pessoa.
+    const eligible = answers.jaTemBinance === "nao";
+    const passoAntesDaConta =
+      answers.reserva === "nao" ||
+      answers.prontidao === "nao" ||
+      answers.objetivo === "aprender";
 
     if (answers.reserva === "nao") {
       findings.push({
@@ -268,9 +273,13 @@ const FLOW = {
     const convertOverride = eligible
       ? {
           offerKey: "default",
-          tag: "Próximo passo compatível",
-          headline: "Conta nova, se você decidir avançar",
-          sub: "A oferta apareceu porque você informou que não possui Binance, já tem reserva, está pronto para revisar o cadastro e quer avançar além do estudo.",
+          tag: passoAntesDaConta ? "Existe, mas não é o seu próximo passo" : "Próximo passo compatível",
+          headline: passoAntesDaConta
+            ? "A conta existe — o seu próximo passo é outro"
+            : "Conta nova, se você decidir avançar",
+          sub: passoAntesDaConta
+            ? "A oferta aparece porque você ainda não tem conta na Binance. Pelas suas respostas, porém, o passo anterior é o do plano acima — reserva, estudo ou clareza sobre o que você quer. A conta continua aqui quando esse passo estiver resolvido."
+            : "A oferta aparece porque você informou que ainda não tem conta na Binance, já tem reserva e quer avançar além do estudo.",
           offers: [
             "Cadastre-se pelo link de indicação e receba cashback vitalício em parte das taxas elegíveis.",
             "Válido para contas novas e elegíveis.",
