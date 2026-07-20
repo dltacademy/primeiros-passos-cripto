@@ -95,29 +95,42 @@ trackingSandbox.window.location.search = "?c=%3Cscript%3E&v=variante%20inválida
 assert.equal(tracking.getChannel(), null);
 assert.equal(tracking.getVariant(), "a");
 
-let renderedReport;
-vm.runInNewContext(bootstrapSource, {
-  Set,
-  FLOW: {
-    buildReport: () => ({
-      stats: [
-        { value: "Conta elegível", label: "próximo passo" },
-        { value: "Oferta opcional", label: "roteamento" },
-      ],
-      convertOverride: { offerKey: "default" },
-    }),
-  },
-  document: { getElementById: () => ({}) },
-  getOfferLink: () => "#",
-  isTelegramConfigured: () => false,
-  renderFlow: (_root, flow) => { renderedReport = flow.buildReport({}); },
-  loadGoatCounter() {},
-});
-assert.equal(renderedReport.convertOverride, null, "destino inválido não pode manter oferta no relatório");
+function runBootstrap(getOfferLink) {
+  let renderedReport;
+  vm.runInNewContext(bootstrapSource, {
+    Set,
+    FLOW: {
+      buildReport: () => ({
+        stats: [
+          { value: "Conta elegível", label: "próximo passo" },
+          { value: "Oferta opcional", label: "roteamento" },
+        ],
+        convertOverride: { offerKey: "default" },
+      }),
+    },
+    document: { getElementById: () => ({}) },
+    getOfferLink,
+    isTelegramConfigured: () => false,
+    renderFlow: (_root, flow) => { renderedReport = flow.buildReport({}); },
+    loadGoatCounter() {},
+  });
+  return renderedReport;
+}
+
+const unavailableReport = runBootstrap(() => "#");
+assert.equal(unavailableReport.convertOverride, null, "destino inválido não pode manter oferta no relatório");
 assert.deepEqual(
-  Array.from(renderedReport.stats, (stat) => stat.value),
+  Array.from(unavailableReport.stats, (stat) => stat.value),
   ["Sem oferta", "Sem oferta"],
   "fallback deve alinhar os indicadores do relatório"
+);
+
+const availableReport = runBootstrap(() => "https://example.com/ref/default");
+assert.ok(availableReport.convertOverride, "destino HTTPS válido deve preservar a oferta opcional");
+assert.deepEqual(
+  Array.from(availableReport.stats, (stat) => stat.value),
+  ["Oferta opcional", "Oferta opcional"],
+  "a ferramenta não pode afirmar elegibilidade externa não verificada"
 );
 
 for (const source of [engine, trackingSource, bootstrapSource]) {
