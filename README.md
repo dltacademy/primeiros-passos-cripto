@@ -2,26 +2,25 @@
 
 Ferramenta educacional para organizar reserva, segurança, prontidão e comportamento antes de abrir uma conta ou fazer o primeiro aporte em cripto.
 
-O fluxo usa oito respostas para produzir um plano personalizado. A oferta afiliada só aparece quando a pessoa:
+O fluxo usa oito respostas para produzir um plano personalizado. A oferta afiliada aparece somente para quem informou que ainda não possui Binance. Reserva, prontidão e objetivo definem se a conta é o próximo passo ou apenas uma opção para consultar depois.
 
-- informou que ainda não possui Binance;
-- já possui uma reserva para imprevistos compatível com seus gastos;
-- declarou prontidão para revisar o cadastro;
-- quer avançar além do estudo.
-
-Cliente Binance, pessoa sem reserva, pessoa sem prontidão e quem quer apenas aprender recebem um plano completo sem CTA comercial.
+Quem já possui Binance recebe um plano voltado à segurança da conta existente, sem CTA de nova conta.
 
 ## Estado de publicação
 
-A ferramenta permanece acessível para revisão, com indexação bloqueada por `<meta name="robots" content="noindex">`. O `robots.txt` usa `Allow: /` para que o crawler consiga ler essa diretiva.
+A ferramenta está publicada em `index, follow`, conectada ao portal e disponível em:
 
-Não liberar indexação, divulgar ou escalar antes de:
+`https://primeiros-passos-cripto.dlt.academy/`
 
-1. validar todos os caminhos em desktop e celular;
-2. revisar teclado, foco, console, copiar plano e download do card;
-3. abrir o link afiliado em sessão deslogada e confirmar benefício, país e elegibilidade;
-4. confirmar um cadastro atribuível no painel;
-5. aprovar o conteúdo e fazer merge deliberado.
+Antes de direcionar verba paga, o gate mínimo é:
+
+1. revisar os três resultados centrais — conta existente, plano antes da conta e pessoa pronta para revisar cadastro;
+2. validar desktop e celular, incluindo hierarquia do resultado e CTA;
+3. revisar teclado, foco, console, copiar plano e download do card;
+4. confirmar que canal e variante permitidos chegam ao tracking e ao link afiliado;
+5. começar com orçamento pequeno e regra de parada definida.
+
+A publicação orgânica não depende de campanha paga. Atribuição e leitura do painel afiliado gateiam escala, não a utilidade pública da ferramenta.
 
 ## Arquitetura
 
@@ -48,5 +47,3 @@ O workflow `Validate` executa esses gates em pull requests. O deploy do GitHub P
 ## Domínio
 
 URL canônica: `https://primeiros-passos-cripto.dlt.academy/`.
-
-O portal e o sitemap não são alterados neste lote. A integração pública deve ser revisada separadamente depois do gate da ferramenta.
