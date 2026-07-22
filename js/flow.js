@@ -56,7 +56,7 @@ const FLOW = {
     },
     {
       title: "Recursos e prontidão",
-      description: "Uma conta nova só aparece como próximo passo quando existe base e intenção para avançar.",
+      description: "Reserva, objetivo e prontidão definem se a conta é o próximo passo ou apenas uma opção para depois.",
       fields: [
         {
           id: "valorMensal",
@@ -134,6 +134,42 @@ const FLOW = {
       answers.reserva === "nao" ||
       answers.prontidao === "nao" ||
       answers.objetivo === "aprender";
+
+    const priorities = [];
+    if (answers.reserva === "nao") priorities.push("construir a reserva para imprevistos");
+    if (answers.objetivo === "aprender") priorities.push("entender os riscos antes de decidir");
+    if (answers.prontidao === "nao") priorities.push("revisar cadastro, custódia e segurança");
+    const priorityText = priorities.join(" e ") || "seguir o plano abaixo";
+
+    const nextStep = answers.jaTemBinance === "sim"
+      ? {
+          headline: "Fortaleça a conta que já existe",
+          sublabel: "Você já possui Binance; o plano prioriza segurança e uso consciente, sem recomendar outra conta.",
+          stat: "Revisar segurança",
+          findingTitle: "Seu próximo passo: revisar a segurança da conta atual",
+          findingText: "Confirme 2FA, dispositivos autorizados, código antiphishing e canais oficiais antes de transferir ou movimentar recursos.",
+        }
+      : passoAntesDaConta
+        ? {
+            headline: "Seu próximo passo vem antes da conta",
+            sublabel: `Pelas suas respostas, a prioridade é ${priorityText}.`,
+            stat: "Plano primeiro",
+            findingTitle: "Primeiro, conclua a base do plano",
+            findingText: `Você ainda não tem Binance, mas a prioridade é ${priorityText}. A conta pode ser consultada sem pressa e não precisa ser aberta agora.`,
+          }
+        : {
+            headline: "Você já pode revisar a abertura",
+            sublabel: "Você informou que ainda não tem Binance, possui reserva e quer avançar além do estudo.",
+            stat: "Conta opcional",
+            findingTitle: "Seu próximo passo: revisar a conta sem depositar",
+            findingText: "Confira país, KYC, segurança e benefício exibido no cadastro. Abrir a conta não obriga depósito nem operação.",
+          };
+
+    findings.push({
+      severity: 1,
+      title: nextStep.findingTitle,
+      text: nextStep.findingText,
+    });
 
     if (answers.reserva === "nao") {
       findings.push({
@@ -243,8 +279,8 @@ const FLOW = {
     if (answers.prontidao === "nao") {
       findings.push({
         severity: 1,
-        title: "Ainda não estar pronto remove a oferta",
-        text: "O próximo passo é compreender cadastro, custódia e risco. Nenhuma conta nova é necessária para concluir este plano.",
+        title: "Ainda não estar pronto muda a prioridade",
+        text: "O próximo passo é compreender cadastro, custódia e risco. A conta pode ser consultada, mas não precisa ser aberta para concluir este plano.",
       });
       plan.push({
         title: "Revisar o guia de criação e proteção de conta",
@@ -273,32 +309,40 @@ const FLOW = {
     const convertOverride = eligible
       ? {
           offerKey: "default",
-          tag: passoAntesDaConta ? "Existe, mas não é o seu próximo passo" : "Próximo passo compatível",
+          tag: passoAntesDaConta ? "Para consultar sem pressa" : "Próximo passo opcional",
           headline: passoAntesDaConta
-            ? "A conta existe — o seu próximo passo é outro"
-            : "Conta nova, se você decidir avançar",
+            ? "A conta pode esperar até a base estar resolvida"
+            : "Uma conta nova é uma continuação possível do seu plano",
           sub: passoAntesDaConta
-            ? "A oferta aparece porque você ainda não tem conta na Binance. Pelas suas respostas, porém, o passo anterior é o do plano acima — reserva, estudo ou clareza sobre o que você quer. A conta continua aqui quando esse passo estiver resolvido."
-            : "A oferta aparece porque você informou que ainda não tem conta na Binance, já tem reserva e quer avançar além do estudo.",
+            ? `Você informou que ainda não tem Binance. Pelas suas respostas, a prioridade é ${priorityText}. Mesmo assim, você pode consultar agora as condições oficiais e decidir depois.`
+            : "Você informou que ainda não tem Binance, já possui reserva e se sente pronto para revisar o cadastro. Por isso, esta opção aparece como continuação do plano.",
           offers: [
             "Cadastre-se pelo link de indicação e receba cashback vitalício em parte das taxas elegíveis.",
             "Válido para contas novas e elegíveis.",
             "Abrir conta não obriga depósito ou operação.",
           ],
-          ctaLabel: "Ver condições para conta nova →",
+          ctaLabel: passoAntesDaConta
+            ? "Consultar condições da conta →"
+            : "Ver cadastro com benefício elegível →",
           note: "Confirme no cadastro o país, a elegibilidade, os produtos cobertos e as condições vigentes. O benefício pode não se aplicar a todas as operações.",
           disclosure: "Este é um link de afiliado. A DLT Academy pode receber comissão se uma conta elegível for criada e utilizada. A recomendação decorre das respostas acima, e as condições exibidas pela Binance prevalecem.",
         }
       : null;
 
+    const shareHeadline = answers.jaTemBinance === "sim"
+      ? "REVISAR SEGURANÇA"
+      : passoAntesDaConta
+        ? "PLANO PRIMEIRO"
+        : "REVISAR CADASTRO";
+
     return {
-      headline: eligible ? "Plano pronto para revisão" : "Plano educacional sem pressão",
-      sublabel: `Para quem está ${EXPERIENCIA_LABEL[answers.experiencia]} e quer ${OBJETIVO_LABEL[answers.objetivo]}`,
+      headline: nextStep.headline,
+      sublabel: nextStep.sublabel,
       tone: answers.reserva === "nao" ? "bad" : "good",
       stats: [
         { value: `R$ ${answers.valorMensal}`, label: "referência mensal" },
         { value: answers.reserva === "sim" ? "Base pronta" : "Reserva primeiro", label: "situação financeira" },
-        { value: eligible ? "Conta elegível" : "Sem oferta", label: "próximo passo" },
+        { value: nextStep.stat, label: "próximo passo" },
       ],
       findings,
       plan,
@@ -306,12 +350,12 @@ const FLOW = {
       extraText: "Este plano organiza uma decisão educacional. Ele não prevê preços, não define uma alocação ideal e não substitui avaliação financeira, tributária ou jurídica individual.",
       shareCard: {
         eyebrow: "MEU PLANO DE ENTRADA NO CRIPTO",
-        headline: eligible ? "PRONTO PARA REVISAR" : "BASE PRIMEIRO",
+        headline: shareHeadline,
         lines: [
           `${EXPERIENCIA_LABEL[answers.experiencia]} · ${OBJETIVO_LABEL[answers.objetivo]}`,
           "Educacional — não é promessa de retorno",
         ],
-        headlineColor: eligible ? "#6EE7A8" : "#4A8DF8",
+        headlineColor: passoAntesDaConta ? "#4A8DF8" : "#6EE7A8",
       },
     };
   },
