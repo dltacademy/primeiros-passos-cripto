@@ -6,6 +6,7 @@ const root = new URL("../", import.meta.url);
 const index = fs.readFileSync(new URL("index.html", root), "utf8");
 const robots = fs.readFileSync(new URL("robots.txt", root), "utf8");
 const engine = fs.readFileSync(new URL("js/flow-engine.js", root), "utf8");
+const flowSource = fs.readFileSync(new URL("js/flow.js", root), "utf8");
 const bootstrapSource = fs.readFileSync(new URL("js/bootstrap.js", root), "utf8");
 const trackingSource = fs.readFileSync(new URL("js/tracking.js", root), "utf8");
 const configSource = fs.readFileSync(new URL("config.js", root), "utf8");
@@ -16,7 +17,7 @@ const workflows = [
 
 const canonical = "https://primeiros-passos-cripto.dlt.academy/";
 const image = `${canonical}og-image.png`;
-assert.match(index, /<meta name="robots" content="noindex">/);
+assert.match(index, /<meta name="robots" content="index, follow">/);
 assert.match(robots, /^User-agent: \*\s+Allow: \/$/m);
 assert.match(index, /<meta name="referrer" content="no-referrer">/);
 assert.match(index, /Content-Security-Policy/);
@@ -51,6 +52,10 @@ assert.match(engine, /error\.tabIndex = -1/);
 assert.match(engine, /if \(!hasOffer && !hasTelegram\) return null/);
 assert.match(engine, /sponsored nofollow noopener noreferrer/);
 assert.match(engine, /referrerPolicy = "no-referrer"/);
+assert.equal(flowSource.includes("Ainda não estar pronto remove a oferta"), false);
+assert.match(flowSource, /Seu próximo passo: revisar a conta sem depositar/);
+assert.match(flowSource, /Seu próximo passo vem antes da conta/);
+assert.match(flowSource, /Fortaleça a conta que já existe/);
 
 for (const line of workflows.split("\n")) {
   const match = line.match(/uses:\s*[^@\s]+@([^\s#]+)/);
@@ -102,7 +107,7 @@ function runBootstrap(getOfferLink) {
     FLOW: {
       buildReport: () => ({
         stats: [
-          { value: "Conta elegível", label: "próximo passo" },
+          { value: "Conta opcional", label: "próximo passo" },
           { value: "Oferta opcional", label: "roteamento" },
         ],
         convertOverride: { offerKey: "default" },
@@ -129,12 +134,12 @@ const availableReport = runBootstrap(() => "https://example.com/ref/default");
 assert.ok(availableReport.convertOverride, "destino HTTPS válido deve preservar a oferta opcional");
 assert.deepEqual(
   Array.from(availableReport.stats, (stat) => stat.value),
-  ["Oferta opcional", "Oferta opcional"],
-  "a ferramenta não pode afirmar elegibilidade externa não verificada"
+  ["Conta opcional", "Oferta opcional"],
+  "o bootstrap deve preservar o próximo passo realmente calculado"
 );
 
-for (const source of [engine, trackingSource, bootstrapSource]) {
+for (const source of [engine, flowSource, trackingSource, bootstrapSource]) {
   assert.equal(/localStorage|sessionStorage|document\.cookie/.test(source), false);
 }
 
-console.log("Technical contract: OK — metadata, CSP, links, allowlists, fallback e workflows");
+console.log("Technical contract: OK — publicação, resultado, CSP, links, allowlists, fallback e workflows");
