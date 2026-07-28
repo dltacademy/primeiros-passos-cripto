@@ -29,6 +29,26 @@ assert.match(
   /cashback vitalício em parte das taxas elegíveis/i
 );
 assert.match(JSON.stringify(eligible.convertOverride), /contas novas e elegíveis/i);
+assert.equal(eligible.headline, "Você já pode revisar a abertura");
+assert.equal(eligible.stats[2].value, "Conta opcional");
+assert.match(eligible.findings[0].title, /seu próximo passo/i);
+assert.match(eligible.convertOverride.ctaLabel, /benefício elegível/i);
+
+const planFirst = report({ reserva: "nao", prontidao: "nao", objetivo: "aprender" });
+assert.equal(planFirst.headline, "Seu próximo passo vem antes da conta");
+assert.equal(planFirst.stats[2].value, "Plano primeiro");
+assert.match(planFirst.findings[0].text, /não precisa ser aberta agora/i);
+assert.match(planFirst.convertOverride.ctaLabel, /consultar condições/i);
+assert.equal(
+  JSON.stringify(planFirst).includes("Ainda não estar pronto remove a oferta"),
+  false,
+  "a página não pode contradizer a regra comercial atual"
+);
+
+const existingAccount = report({ jaTemBinance: "sim" });
+assert.equal(existingAccount.convertOverride, null, "cliente existente não recebe CTA de conta nova");
+assert.equal(existingAccount.headline, "Fortaleça a conta que já existe");
+assert.equal(existingAccount.stats[2].value, "Revisar segurança");
 
 const binanceAnswers = ["sim", "nao"];
 const reserveAnswers = ["sim", "nao"];
@@ -102,6 +122,7 @@ const prohibited = [
   "pra sempre",
   "chamada de 15min",
   "revisar meu plano",
+  "ainda não estar pronto remove a oferta",
 ];
 for (const claim of prohibited) {
   assert.equal(
@@ -111,5 +132,6 @@ for (const claim of prohibited) {
   );
 }
 
+assert.equal(/value:\s*eligible\s*\?\s*"Conta elegível"/.test(source), false, "resultado não pode afirmar elegibilidade externa");
 assert.equal(/tgLabel|tgPrefill|publicTelegram/.test(source), false, "fluxo não deve prometer contato");
-console.log("Flow matrix: OK — 24 combinações centrais, 8 campos e claims revisados");
+console.log("Flow matrix: OK — 24 combinações, próximo passo explícito e claims revisados");
