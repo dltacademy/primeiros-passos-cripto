@@ -12,7 +12,6 @@ function gateUnavailableConversion(report) {
     ? report.stats.map((stat) => {
         if (!routingLabels.has(String(stat.label).toLowerCase())) return stat;
         if (!conversionAvailable) return { ...stat, value: "Sem oferta" };
-        if (stat.value === "Conta elegível") return { ...stat, value: "Oferta opcional" };
         return stat;
       })
     : report.stats;
