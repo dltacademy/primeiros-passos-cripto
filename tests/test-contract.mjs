@@ -49,7 +49,13 @@ assert.equal(engine.includes("innerHTML"), false, "engine deve usar DOM seguro")
 assert.equal(engine.includes("report.html"), false, "report.html não é suportado");
 assert.equal(engine.includes(".style"), false, "engine não pode gerar estilos inline bloqueados pela CSP");
 assert.match(engine, /error\.tabIndex = -1/);
-assert.match(engine, /if \(!hasOffer && !hasTelegram\) return null/);
+assert.match(engine, /if \(!hasOffer\) return null/);
+// O grupo e gratuito e nao depende de elegibilidade: acompanha a oferta como
+// brinde e sustenta sozinho o ramo sem oferta. Nunca contato pessoal.
+assert.match(engine, /isCommunityConfigured\(\)/);
+assert.match(engine, /function renderCommunity\(\)/);
+assert.equal(engine.includes("getTelegramLink"), false);
+assert.equal(engine.includes("publicTelegram"), false);
 assert.match(engine, /sponsored nofollow noopener noreferrer/);
 assert.match(engine, /referrerPolicy = "no-referrer"/);
 assert.equal(flowSource.includes("Ainda não estar pronto remove a oferta"), false);
@@ -64,7 +70,9 @@ for (const line of workflows.split("\n")) {
 assert.match(workflows, /permissions:\s*\n\s*contents: read/);
 
 assert.match(configSource, /allowedVariants:\s*\["a", "b"\]/);
-assert.match(configSource, /telegramUsername:\s*""/);
+assert.equal(configSource.includes("telegramUsername"), false);
+assert.match(configSource, /community:\s*\{/);
+assert.match(configSource, /https:\/\/t\.me\/dltacademy/);
 assert.equal(/chamada|revis[aã]o personalizada/i.test(configSource), false);
 
 const trackingSandbox = {
@@ -75,7 +83,7 @@ const trackingSandbox = {
     refByChannel: { yt: "https://example.com/ref/youtube" },
     allowedVariants: ["a", "b"],
     offers: { default: { url: "https://example.com/ref/default" } },
-    telegramUsername: "",
+    community: { url: "https://t.me/dltacademy" },
     goatCounterSite: "",
   },
   window: { location: { search: "?c=yt&v=b" } },
@@ -115,7 +123,7 @@ function runBootstrap(getOfferLink) {
     },
     document: { getElementById: () => ({}) },
     getOfferLink,
-    isTelegramConfigured: () => false,
+    isCommunityConfigured: () => true,
     renderFlow: (_root, flow) => { renderedReport = flow.buildReport({}); },
     loadGoatCounter() {},
   });
