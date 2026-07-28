@@ -328,9 +328,15 @@ function renderFlow(root, flow) {
 
   // Botão do grupo. Link externo, mas não afiliado: sem sponsored/nofollow,
   // com o referrerpolicy que a política de segurança exige.
-  function communityButton() {
+  //
+  // O peso visual depende de quem está ao lado, e isso não é estilo: a oferta
+  // é a ação que sustenta o projeto. `.btn-telegram` (#26a5e4) tem contraste
+  // 7.20:1 com o fundo, contra 3.00:1 do `.btn-primary` (#1E4FD8) — solto ao
+  // lado da oferta, o brinde puxaria mais o olho que ela. Junto: discreto.
+  // Sozinho: destacado, porque ali não há nada para disputar.
+  function communityButton(destaque) {
     const cfg = CONFIG.community;
-    const btn = element("a", "btn btn-telegram", cfg.label || "Entrar grátis no grupo →");
+    const btn = element("a", destaque ? "btn btn-telegram" : "btn btn-secondary", cfg.label || "Entrar grátis no grupo →");
     btn.href = getCommunityLink();
     btn.target = "_blank";
     btn.rel = "noopener noreferrer";
@@ -347,7 +353,7 @@ function renderFlow(root, flow) {
     if (cfg.headline) block.appendChild(element("div", "convert-headline", cfg.headline));
     if (cfg.sub) block.appendChild(element("div", "convert-sub", cfg.sub));
     const actions = element("div", "btn-row");
-    actions.appendChild(communityButton());
+    actions.appendChild(communityButton(true)); // sozinho: é a ação da vez
     block.appendChild(actions);
     return block;
   }
@@ -383,7 +389,7 @@ function renderFlow(root, flow) {
     // Comunidade como brinde ao lado da oferta: é gratuita e não depende de
     // elegibilidade, então acompanha sem competir. hideCommunity suprime.
     if (config.hideCommunity !== true && isCommunityConfigured()) {
-      actions.appendChild(communityButton());
+      actions.appendChild(communityButton(false));
     }
 
     block.appendChild(actions);
