@@ -7,3 +7,19 @@
 
 .report-findings { margin-top: 20px; }
 .report-extra { margin-top: 16px; }
+
+/* O primeiro achado resume o próximo passo e precisa ser reconhecido
+   antes dos detalhes e da lista completa do plano. */
+.report-findings .finding:first-child {
+  border-left-color: var(--accent);
+  background: linear-gradient(135deg, rgba(30,79,216,.18), rgba(74,141,248,.06));
+}
+
+.report-findings .finding:first-child .finding-title {
+  color: var(--accent);
+  font-family: var(--font-head);
+}
+
+/* Na oferta contextual existe apenas uma ação principal. */
+.convert-block .btn-row { justify-content: stretch; }
+.convert-block .btn-primary { width: 100%; justify-content: center; }
