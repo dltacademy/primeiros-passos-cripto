@@ -19,6 +19,21 @@ const CONFIG = {
     },
   },
 
+  // Próximo passo do funil. Aresta única de saída desta ferramenta — o grafo
+  // completo continua sendo do portal; aqui declara-se só o destino, para não
+  // duplicar o registry em cada repositório de ferramenta.
+  // Link INTERNO do domínio: nunca recebe sponsored/nofollow nem target=_blank.
+  // Copy neutra de propósito: este bloco é o mesmo nos dois ramos de
+  // elegibilidade, então não pode dizer "antes de abrir a conta" — para quem
+  // já tem conta, o guia serve para revisar a proteção do que já existe.
+  nextStep: {
+    url: "https://dlt.academy/guias/conta-binance/",
+    tag: "Guia interativo",
+    headline: "Conta segura: o passo que evita a maior parte dos prejuízos",
+    sub: "Cadastro, verificação e proteção com passkey — um passo por vez. Serve tanto para abrir uma conta quanto para revisar uma que já existe, sem compartilhar senha ou código com ninguém.",
+    ctaLabel: "Abrir o guia de conta segura →",
+  },
+
   // Vazio por decisão de produto: nenhum contato público está configurado.
   telegramUsername: "",
   goatCounterSite: "",

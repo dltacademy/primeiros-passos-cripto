@@ -305,6 +305,14 @@ function renderFlow(root, flow) {
     } else {
       track("roteador_resultado_sem_oferta");
     }
+
+    // Depois da conversão, nunca no lugar dela: quem é elegível vê a oferta e o
+    // guia; quem não é continua sem oferta, mas ganha um próximo passo útil.
+    const nextStepBlock = renderNextStep();
+    if (nextStepBlock) {
+      root.appendChild(nextStepBlock);
+      track("proximo_passo_exibido");
+    }
   }
 
   function renderConvert(config) {
@@ -354,6 +362,37 @@ function renderFlow(root, flow) {
         config.disclosure || "Este é um link de afiliado. A DLT Academy pode receber comissão se uma conta elegível for criada e utilizada. As condições exibidas no cadastro prevalecem."
       ));
     }
+    return block;
+  }
+
+  function renderNextStep() {
+    const step = CONFIG.nextStep;
+    if (!step || typeof step.url !== "string") return null;
+
+    let href;
+    try {
+      const parsed = new URL(step.url);
+      if (parsed.protocol !== "https:") return null;
+      href = parsed.href;
+    } catch (_) {
+      return null;
+    }
+
+    const block = element("div", "card convert-block visible");
+    if (step.tag) block.appendChild(element("span", "tag s1", step.tag));
+    if (step.headline) block.appendChild(element("div", "convert-headline", step.headline));
+    if (step.sub) block.appendChild(element("div", "convert-sub", step.sub));
+
+    const actions = element("div", "btn-row");
+    const link = element("a", "btn btn-secondary", step.ctaLabel || "Ver o próximo passo →");
+    link.href = href;
+    // Interno ao domínio: sem sponsored/nofollow (não sabotar o próprio SEO) e
+    // sem target=_blank (é navegação interna, mantém a mesma aba).
+    link.rel = "noopener noreferrer";
+    link.addEventListener("click", () => track("clique_proximo_passo_guia"));
+    actions.appendChild(link);
+    block.appendChild(actions);
+
     return block;
   }
 
