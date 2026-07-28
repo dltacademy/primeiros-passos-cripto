@@ -313,14 +313,50 @@ function renderFlow(root, flow) {
       root.appendChild(nextStepBlock);
       track("proximo_passo_exibido");
     }
+
+    // Sem oferta, o grupo entra em bloco próprio, depois do guia: o guia é o
+    // próximo passo concreto de quem acabou de receber um plano; o grupo é a
+    // continuação aberta. Com oferta, ele já apareceu como brinde ali dentro.
+    if (!conversionBlock) {
+      const communityBlock = renderCommunity();
+      if (communityBlock) {
+        root.appendChild(communityBlock);
+        track("comunidade_exibida");
+      }
+    }
+  }
+
+  // Botão do grupo. Link externo, mas não afiliado: sem sponsored/nofollow,
+  // com o referrerpolicy que a política de segurança exige.
+  function communityButton() {
+    const cfg = CONFIG.community;
+    const btn = element("a", "btn btn-telegram", cfg.label || "Entrar grátis no grupo →");
+    btn.href = getCommunityLink();
+    btn.target = "_blank";
+    btn.rel = "noopener noreferrer";
+    btn.referrerPolicy = "no-referrer";
+    btn.addEventListener("click", () => track("clique_comunidade"));
+    return btn;
+  }
+
+  function renderCommunity() {
+    if (!isCommunityConfigured()) return null;
+    const cfg = CONFIG.community;
+    const block = element("div", "card convert-block visible");
+    if (cfg.tag) block.appendChild(element("span", "tag s1", cfg.tag));
+    if (cfg.headline) block.appendChild(element("div", "convert-headline", cfg.headline));
+    if (cfg.sub) block.appendChild(element("div", "convert-sub", cfg.sub));
+    const actions = element("div", "btn-row");
+    actions.appendChild(communityButton());
+    block.appendChild(actions);
+    return block;
   }
 
   function renderConvert(config) {
     const offerKey = config.offerKey || "default";
     const offerUrl = config.hideRef ? "#" : getOfferLink(offerKey);
     const hasOffer = Boolean(offerUrl && offerUrl !== "#");
-    const hasTelegram = config.publicTelegram === true && isTelegramConfigured();
-    if (!hasOffer && !hasTelegram) return null;
+    if (!hasOffer) return null;
 
     const block = element("div", "card convert-block visible");
     if (config.tag) block.appendChild(element("span", "tag s2", config.tag));
@@ -344,13 +380,10 @@ function renderFlow(root, flow) {
       actions.appendChild(link);
     }
 
-    if (hasTelegram) {
-      const telegram = element("a", "btn btn-telegram", config.tgLabel || "Falar no Telegram");
-      telegram.href = getTelegramLink(config.tgPrefill || "");
-      telegram.target = "_blank";
-      telegram.rel = "nofollow noopener noreferrer";
-      telegram.referrerPolicy = "no-referrer";
-      actions.appendChild(telegram);
+    // Comunidade como brinde ao lado da oferta: é gratuita e não depende de
+    // elegibilidade, então acompanha sem competir. hideCommunity suprime.
+    if (config.hideCommunity !== true && isCommunityConfigured()) {
+      actions.appendChild(communityButton());
     }
 
     block.appendChild(actions);
