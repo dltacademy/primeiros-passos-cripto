@@ -13,15 +13,12 @@ Cliente Binance, pessoa sem reserva, pessoa sem prontidão e quem quer apenas ap
 
 ## Estado de publicação
 
-A ferramenta permanece acessível para revisão, com indexação bloqueada por `<meta name="robots" content="noindex">`. O `robots.txt` usa `Allow: /` para que o crawler consiga ler essa diretiva.
+**No ar e indexável** em `https://primeiros-passos-cripto.dlt.academy/`, servindo `<meta name="robots" content="index, follow">` desde o commit `7f6f1d2`. O `robots.txt` mantém `Allow: /`.
 
-Não liberar indexação, divulgar ou escalar antes de:
+Antes de escalar divulgação ou verba paga, continua valendo:
 
-1. validar todos os caminhos em desktop e celular;
-2. revisar teclado, foco, console, copiar plano e download do card;
-3. abrir o link afiliado em sessão deslogada e confirmar benefício, país e elegibilidade;
-4. confirmar um cadastro atribuível no painel;
-5. aprovar o conteúdo e fazer merge deliberado.
+1. abrir o link afiliado em sessão deslogada e confirmar benefício, país e elegibilidade;
+2. confirmar um cadastro atribuível no painel.
 
 ## Arquitetura
 
@@ -30,7 +27,7 @@ Não liberar indexação, divulgar ou escalar antes de:
 - respostas processadas somente no navegador;
 - CSP restritiva e JavaScript executável somente em arquivos externos;
 - tracking opcional por `?c=<canal>&v=<variante>` com parâmetros sanitizados;
-- contato público desabilitado enquanto `telegramUsername` estiver vazio.
+- nenhum contato pessoal exposto: a ferramenta não pede nem armazena dado de contato.
 
 ## Testes
 
