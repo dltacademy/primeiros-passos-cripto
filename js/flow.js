@@ -139,7 +139,13 @@ const FLOW = {
     if (answers.reserva === "nao") priorities.push("construir a reserva para imprevistos");
     if (answers.objetivo === "aprender") priorities.push("entender os riscos antes de decidir");
     if (answers.prontidao === "nao") priorities.push("revisar cadastro, custódia e segurança");
-    const priorityText = priorities.join(" e ") || "seguir o plano abaixo";
+    // Lista em português: "A", "A e B", "A, B e C" — nunca "A e B e C".
+    // As três podem ser verdadeiras ao mesmo tempo (sem reserva, só aprender
+    // e sem prontidão), então o caso de três itens é alcançável de verdade.
+    const priorityText = priorities.length > 1
+      ? `${priorities.slice(0, -1).join(", ")} e ${priorities[priorities.length - 1]}`
+      : priorities[0] || "seguir o plano abaixo";
+    const priorityLead = priorities.length > 1 ? "as prioridades são" : "a prioridade é";
 
     const nextStep = answers.jaTemBinance === "sim"
       ? {
@@ -152,10 +158,10 @@ const FLOW = {
       : passoAntesDaConta
         ? {
             headline: "Seu próximo passo vem antes da conta",
-            sublabel: `Pelas suas respostas, a prioridade é ${priorityText}.`,
+            sublabel: `Pelas suas respostas, ${priorityLead} ${priorityText}.`,
             stat: "Plano primeiro",
             findingTitle: "Primeiro, conclua a base do plano",
-            findingText: `Você ainda não tem Binance, mas a prioridade é ${priorityText}. A conta pode ser consultada sem pressa e não precisa ser aberta agora.`,
+            findingText: `Você ainda não tem Binance, mas ${priorityLead} ${priorityText}. A conta pode ser consultada sem pressa e não precisa ser aberta agora.`,
           }
         : {
             headline: "Você já pode revisar a abertura",
@@ -314,7 +320,7 @@ const FLOW = {
             ? "A conta pode esperar até a base estar resolvida"
             : "Uma conta nova é uma continuação possível do seu plano",
           sub: passoAntesDaConta
-            ? `Você informou que ainda não tem Binance. Pelas suas respostas, a prioridade é ${priorityText}. Mesmo assim, você pode consultar agora as condições oficiais e decidir depois.`
+            ? `Você informou que ainda não tem Binance. Pelas suas respostas, ${priorityLead} ${priorityText}. Mesmo assim, você pode consultar agora as condições oficiais e decidir depois.`
             : "Você informou que ainda não tem Binance, já possui reserva e se sente pronto para revisar o cadastro. Por isso, esta opção aparece como continuação do plano.",
           offers: [
             "Cadastre-se pelo link de indicação e receba cashback vitalício em parte das taxas elegíveis.",
