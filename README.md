@@ -6,6 +6,19 @@ O fluxo usa oito respostas para produzir um plano personalizado. A oferta afilia
 
 Quem já possui Binance recebe um plano voltado à segurança da conta existente, sem CTA de nova conta.
 
+## O que aparece no fim do resultado
+
+O resultado termina sempre com um próximo passo — nenhum ramo fica sem continuação. O que preenche esse espaço depende do que a pessoa respondeu:
+
+| Ramo | Blocos, nessa ordem |
+|---|---|
+| Ainda não tem Binance | oferta **+** grupo grátis ao lado · guia de conta segura |
+| Já tem Binance | guia de conta segura · grupo grátis |
+
+O **guia** (`/guias/conta-binance/`) é a aresta de saída desta ferramenta para o grafo de conteúdo do portal. O registry completo vive no portal e **não** é duplicado aqui: `CONFIG.nextStep` declara só o destino.
+
+O **grupo** é o canal público da marca em `CONFIG.community`. É gratuito e não depende de elegibilidade, então acompanha a oferta como brinde e sustenta sozinho o ramo que não tem oferta. Não existe contato pessoal em nenhum ponto: o campo `telegramUsername`, que abria conversa direta com uma pessoa, foi removido do ecossistema em 27/07 junto com a promoção que dependia dele.
+
 ## Estado de publicação
 
 A ferramenta está publicada em `index, follow`, conectada ao portal e disponível em:
@@ -29,7 +42,7 @@ A publicação orgânica não depende de campanha paga. Atribuição e leitura d
 - respostas processadas somente no navegador;
 - CSP restritiva e JavaScript executável somente em arquivos externos;
 - tracking opcional por `?c=<canal>&v=<variante>` com parâmetros sanitizados;
-- contato público desabilitado enquanto `telegramUsername` estiver vazio.
+- nenhum contato pessoal: o único canal é o grupo público em `CONFIG.community`.
 
 ## Testes
 
