@@ -199,7 +199,7 @@ function renderFlow(root, flow) {
         renderReport();
       } else {
         stepIndex += 1;
-        track(`flow_passo_${stepIndex + 1}`);
+        track("flow_passo");
         renderStep();
       }
     });
@@ -373,12 +373,9 @@ function renderFlow(root, flow) {
     root.appendChild(card);
 
     const conversionBlock = convert ? renderConvert(convert) : null;
-    if (conversionBlock) {
-      root.appendChild(conversionBlock);
-      track(`roteador_resultado_${convert.offerKey || "default"}`);
-    } else {
-      track("roteador_resultado_sem_oferta");
-    }
+    if (conversionBlock) root.appendChild(conversionBlock);
+    // Evento fixo e único: o nome nunca revela o ramo a que as respostas levaram.
+    track("roteador_resultado");
 
     // Depois da conversão, nunca no lugar dela: quem é elegível vê a oferta e o
     // guia; quem não é continua sem oferta, mas ganha um próximo passo útil.
@@ -395,7 +392,6 @@ function renderFlow(root, flow) {
       const communityBlock = renderCommunity();
       if (communityBlock) {
         root.appendChild(communityBlock);
-        track("comunidade_exibida");
       }
     }
   }
